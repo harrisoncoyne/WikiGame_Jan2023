@@ -19,43 +19,51 @@ public class Code {
     }
 
     public Code() {
-        recursion(URL, startUrl, endUrl, depth, depth, search, correct);
+        recursion(startUrl, depth, maxDepth);
     }
 
-    public String recursion(String URL, String startUrl, String endUrl, int depth, int maxDepth, ArrayList search, ArrayList correct) {
+//    public String recursion(String URL, String startUrl, String endUrl, int depth, int maxDepth, ArrayList search, ArrayList correct) {
+    public String recursion(String startUrl, int depth, int maxDepth) {
 
         if (URL == endUrl) {
 
-            correct.add(search); // need to make it so only adds "correct" search results to correct arraylist
+//            correct.add(search); // need to make it so only adds "correct" search results to correct arraylist
 
-            if (depth > maxDepth) {
+            if (depth <= maxDepth) {
                 System.out.println("complete");
                 System.out.println(correct);
             }
 
             else {
                 correct.clear();
-                return URL;
+//                return URL;
             }
         }
 
         else {
-            System.out.println("depth: " + depth);
-            URL = startUrl;
-            HtmlRead(URL, startUrl, endUrl, depth, search, correct);
+            if (depth <= maxDepth) {
+                System.out.println("depth: " + depth);
+//            URL = startUrl;
+//            HtmlRead(URL, startUrl, endUrl, depth, search, correct);
+                HtmlRead(URL);
 
-            depth++;
+                depth++;
 
-            return startUrl;
+                recursion(HtmlRead(URL), depth, maxDepth);
 
+            }
+            else{
+                recursion(HtmlRead(startUrl), 0, maxDepth);
+            }
         }
         return URL;
     }
 
-    public String HtmlRead(String URL, String startUrl, String endUrl, int depth, ArrayList search, ArrayList correct){
+//    public String HtmlRead(String URL, String startUrl, String endUrl, int depth, ArrayList search, ArrayList correct){
+    public String HtmlRead(String startUrl){
         try {
 
-            URL look = new URL(startUrl); // covert String to URL
+            URL look = new URL(startUrl);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
 
@@ -67,9 +75,11 @@ public class Code {
                 int end = line.indexOf("\"", start);
 
                     if (line.contains("https://")) {
-                        System.out.println(line.substring(start, end));
-                        search.add(new String(line.substring(start, end)));
-                        URL = line.substring(start,end);
+                        if (!line.contains("//upload.")) {
+                            System.out.println(line.substring(start, end));
+                            search.add(new String(line.substring(start, end)));
+                            URL = line.substring(start, end);
+                        }
                     }
             }
         }
