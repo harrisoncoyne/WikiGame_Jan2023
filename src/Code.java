@@ -10,8 +10,10 @@ public class Code {
     public ArrayList<String> search = new ArrayList<>();
     public ArrayList<String> correct = new ArrayList<>();
 
-    private String startName = "Ryan_Reynolds";
-    private String endName = "Chris_Pratt";
+    public int numLinks = 0;
+
+    private String startName = "Keanu_Reeves";
+    private String endName = "Ryan_Reynolds";
 
     private String startUrl = "https://en.wikipedia.org/wiki/" + startName; //starting page
     private String endUrl = "https://en.wikipedia.org/wiki/" + endName; //ending page
@@ -68,13 +70,15 @@ public class Code {
                         int start = line.indexOf("/wiki/");
                         int end = line.indexOf("\"", start);
 
-                        if(line.contains("/wiki/") && !line.contains("Reynolds") && !line.contains(":")) {
+                        if(line.contains("/wiki/") && !line.contains(startName) && !line.contains(":")) {
                             URL = "https://en.wikipedia.org" + line.substring(start, end);
 
                             System.out.println(URL);
+                            numLinks++;
 
                             if (recursion(URL, depth+1, maxDepth) == true) {
                                 System.out.println("complete: " + URL + " " + depth); // show URL history here *****
+                                System.out.println("links searched: " + numLinks);
                                 return true;
                             }
                         }
