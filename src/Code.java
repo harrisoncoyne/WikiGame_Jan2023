@@ -5,28 +5,30 @@ import java.util.ArrayList;
 
 public class Code {
 
-//    private int depth = 0;
-    private int maxDepth = 6;
+//    public int depth = 0;
+    private int maxDepth = 2;
     public ArrayList<String> search = new ArrayList<>();
     public ArrayList<String> correct = new ArrayList<>();
 
-    private String startUrl = "https://en.wikipedia.org/wiki/Ryan_Reynolds"; //starting page
-    private String endUrl = "https://en.wikipedia.org/wiki/Jim_Carrey"; //ending page
-    private String URL = startUrl;
+    private String startName = "Ryan_Reynolds";
+    private String endName = "Chris_Pratt";
+
+    private String startUrl = "https://en.wikipedia.org/wiki/" + startName; //starting page
+    private String endUrl = "https://en.wikipedia.org/wiki/" + endName; //ending page
+    public String URL = startUrl;
 
     public static void main(String[] args) {
         Code reader = new Code();
     }
 
     public Code() {
-        recursion(startUrl, 0, maxDepth);
+        recursion(URL, 0, maxDepth);
     }
 
-    //    public String recursion(String URL, String startUrl, String endUrl, int depth, int maxDepth, ArrayList search, ArrayList correct) {
-    public String recursion(String startUrl, int depth, int maxDepth) {
+    public boolean recursion(String startUrl, int depth, int maxDepth) {
 
         // BASE CASE
-        if (URL == endUrl) {
+        if (startUrl.equals(endUrl)) {
 
 //            correct.add(search); // need to make it so only adds "correct" search results to correct arraylist
 
@@ -35,27 +37,27 @@ public class Code {
                 System.out.println(correct);
             }
 
-            else {
-                correct.clear();
-//                return URL;
-            }
+            return true;
         }
         else if (depth > maxDepth) {
             System.out.println("failed: " + depth);
+//            depth = 0;
+            return false;
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // GENERAL RECURSION CASE
         else {
 
-            if (depth <=maxDepth){
+                System.out.println();
                 System.out.println("depth: " + depth);
+                System.out.println("url: " + URL);
+                System.out.println();
 
+                try { //HTML READ
 
-                //VVV HtmlRead VVV
-
-                try {
-
-                    URL look = new URL(URL);
+                    URL look = new URL(startUrl);
 
                     BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
 
@@ -63,35 +65,28 @@ public class Code {
 
                     while ((line = reader.readLine()) != null) {
 
-                        int start = line.indexOf("https");
+                        int start = line.indexOf("/wiki/");
                         int end = line.indexOf("\"", start);
 
-                        if(line.contains("https://en.wikipedia.org/")) {
-//                    if (!line.contains("Ryan_Reynolds")) {
-                            System.out.println(line.substring(start, end));
+                        if(line.contains("/wiki/") && !line.contains("Reynolds") && !line.contains(":")) {
+                            URL = "https://en.wikipedia.org" + line.substring(start, end);
 
-                            if (!URL.contains("Ryan_Reynolds")) {
-                                search.add(new String(line.substring(start, end)));
-                                URL = line.substring(start, end);
+                            System.out.println(URL);
 
-                                recursion(URL, depth+1, maxDepth);
+                            if (recursion(URL, depth+1, maxDepth) == true) {
+                                System.out.println("complete: " + URL + " " + depth); // show URL history here *****
+                                return true;
                             }
-//                                    System.out.println(URL);
                         }
-//                    }
-
                     }
                 }
                 catch(Exception ex) {
                     System.out.println(ex);
                 }
-
-            }
         }
-        return URL;
+        return false;
     }
 
-    //    public String HtmlRead(String URL, String startUrl, String endUrl, int depth, ArrayList search, ArrayList correct){
     public String HtmlRead(String startUrl, int depth){
         try {
 
@@ -127,5 +122,4 @@ public class Code {
 
         return URL;
     }
-
 }
