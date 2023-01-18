@@ -38,19 +38,17 @@ public class Code implements ActionListener {
 
     public int numLinks = 0;
 
-    private String startName = "Keanu_Reeves";
-    private String endName = "Ryan_Reynolds";
-//    private String startName = url1.getText();
-//    private String endName = search.getText();
+    private String startName;
+    private String endName;
 
-    private String startUrl = "https://en.wikipedia.org/wiki/" + startName; //starting page
-    private String endUrl = "https://en.wikipedia.org/wiki/" + endName; //ending page
-    public String URL = startUrl;
+    private String startUrl; //starting page
+    private String endUrl; //ending page
+    private String URL;
+
+    public boolean complete = false;
 
     public Code() {
         prepareGUI();
-
-//        recursion(URL, 0, maxDepth);
     }
 
     public static void main(String[] args) {
@@ -58,12 +56,22 @@ public class Code implements ActionListener {
         layout.showEventDemo();
     }
 
+    private void urlSearch(){
+        startName = url1.getText();
+        endName = search.getText();
+
+        startUrl = "https://en.wikipedia.org/wiki/" + startName; //starting page
+        endUrl = "https://en.wikipedia.org/wiki/" + endName; //ending page
+        URL = startUrl;
+    }
+
+
 
 
     private void prepareGUI() {
         mainFrame = new JFrame("Java SWING Examples");
         mainFrame.setSize(WIDTH, HEIGHT);
-        mainFrame.setLayout(new GridLayout(7, 1));
+        mainFrame.setLayout(new GridLayout(3, 2));
 
         mb = new JMenuBar();
 
@@ -83,11 +91,11 @@ public class Code implements ActionListener {
 
         mainFrame.add(search);
 
-        mainFrame.setJMenuBar(mb);
+//        mainFrame.setJMenuBar(mb);
 
         headerLabel = new JLabel("", JLabel.CENTER);
-        statusLabel = new JLabel("", JLabel.CENTER);
-        statusLabel.setSize(350, 100);
+        statusLabel = new JLabel("type names", JLabel.CENTER);
+        statusLabel.setSize(350, 10);
 
         mainFrame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent) {
@@ -104,13 +112,10 @@ public class Code implements ActionListener {
 //        JLabel title = new JLabel("results", JLabel.CENTER);
 //        mainFrame.add(title);
 
-        JPanel panel = resultsPanel();
-        mainFrame.add(BorderLayout.CENTER, new JScrollPane(panel));
+//        JPanel panel = resultsPanel();
+//        mainFrame.add(BorderLayout.CENTER, new JScrollPane(panel));
 
         mainFrame.setVisible(true);
-
-
-
     }
 
     public JPanel resultsPanel() {
@@ -143,7 +148,6 @@ public class Code implements ActionListener {
     }
 
     public boolean recursion(String startUrl, int depth, int maxDepth) {
-
         // BASE CASE
         if (startUrl.equals(endUrl)) {
 
@@ -166,6 +170,7 @@ public class Code implements ActionListener {
 
         // GENERAL RECURSION CASE
         else {
+            statusLabel.setText("searching");
 
                 System.out.println();
                 System.out.println("depth: " + depth);
@@ -189,11 +194,17 @@ public class Code implements ActionListener {
                             URL = "https://en.wikipedia.org" + line.substring(start, end);
 
                             System.out.println(URL);
+
+//                            results.setText(results.getText() + "https://en.wikipedia.org" + line.substring(start, end)+ "\n");
+
                             numLinks++;
 
                             if (recursion(URL, depth+1, maxDepth) == true) {
                                 System.out.println("complete: " + URL + " " + depth); // show URL history here *****
                                 System.out.println("links searched: " + numLinks);
+
+                                statusLabel.setText("links searched: " + numLinks);
+
                                 return true;
                             }
                         }
@@ -211,47 +222,12 @@ public class Code implements ActionListener {
             String command = e.getActionCommand();
 
             if (command.equals("search")) {
+                urlSearch();
                 recursion(URL, 0, maxDepth);
-                statusLabel.setText("searching");
+//                statusLabel.setText("searching");
             }
         }
     }
-
-//    public String HtmlRead(String startUrl, int depth){
-//        try {
-//
-//            URL look = new URL(startUrl);
-//
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
-//
-//            String line;
-//
-//            while ((line = reader.readLine()) != null) {
-//
-//                int start = line.indexOf("https");
-//                int end = line.indexOf("\"", start);
-//
-//                if(line.contains("https://en.wikipedia.org/")) {
-////                    if (!line.contains("Ryan_Reynolds")) {
-//                    System.out.println(line.substring(start, end));
-//
-//                    if (!URL.contains("Ryan_Reynolds")) {
-//                        search.add(new String(line.substring(start, end)));
-//                        URL = line.substring(start, end);
-//                        recursion(URL, depth+1, maxDepth);
-//                    }
-////                                    System.out.println(URL);
-//                }
-////                    }
-//
-//            }
-//        }
-//        catch(Exception ex) {
-//            System.out.println(ex);
-//        }
-//
-//        return URL;
-//    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
