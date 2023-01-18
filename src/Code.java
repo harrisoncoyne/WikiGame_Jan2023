@@ -75,9 +75,9 @@ public class Code implements ActionListener {
 
         mb = new JMenuBar();
 
-        url1 = new JTextField();
+        url1 = new JTextField("Keanu_Reeves"); // remove "name" once finished *************
 
-        search = new JTextField();
+        search = new JTextField("Ryan_Reynolds"); // remove "name" once finished *************
 
         urlLabel = new JLabel("first person (typed: \"firstName_lastName\")", JLabel.CENTER);
 
@@ -193,7 +193,7 @@ public class Code implements ActionListener {
                         if(line.contains("/wiki/") && !line.contains(startName) && !line.contains(":")) {
                             URL = "https://en.wikipedia.org" + line.substring(start, end);
 
-                            System.out.println(URL);
+                            System.out.println(URL + " " + numLinks);
 
 //                            results.setText(results.getText() + "https://en.wikipedia.org" + line.substring(start, end)+ "\n");
 
@@ -222,6 +222,7 @@ public class Code implements ActionListener {
             String command = e.getActionCommand();
 
             if (command.equals("search")) {
+                numLinks = 0;
                 urlSearch();
                 recursion(URL, 0, maxDepth);
 //                statusLabel.setText("searching");
