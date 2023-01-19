@@ -46,6 +46,7 @@ public class Code implements ActionListener {
     private String URL;
 
     public boolean complete = false;
+    public boolean searching = false;
 
     public Code() {
         prepareGUI();
@@ -199,11 +200,23 @@ public class Code implements ActionListener {
 
                             numLinks++;
 
-                            if (recursion(URL, depth+1, maxDepth) == true) {
-                                System.out.println("complete: " + URL + " " + depth); // show URL history here *****
+                            if (recursion(URL, depth+1, maxDepth) == true) { // ***** make it so that it doesn't repeat...can't use a boolean, as it doesn't stop the recursion *****
+
+                                correct.add(URL); // *** ADD CORRECT ROUTE URLs *** --- see if possible/required???
+
+                                depth = 0; // ***** doesn't stop recursion...find some other way to stop *****
+
+                                System.out.println("complete: " + URL + " " + depth);
+
+                                // show URL history here?????
+
                                 System.out.println("links searched: " + numLinks);
 
                                 statusLabel.setText("links searched: " + numLinks);
+
+                                System.out.println(correct); // **CHECK**
+
+//                                complete = true; // ***** doesn't do anything *****
 
                                 return true;
                             }
@@ -225,7 +238,14 @@ public class Code implements ActionListener {
                 numLinks = 0;
                 urlSearch();
                 recursion(URL, 0, maxDepth);
-//                statusLabel.setText("searching");
+
+
+                if (searching == true) { // **CONFIRM THAT THIS CODE WORKS**
+                    statusLabel.setText("searching");
+                }
+                else{
+                    statusLabel.setText("");
+                }
             }
         }
     }
