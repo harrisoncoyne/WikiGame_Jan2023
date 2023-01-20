@@ -19,6 +19,7 @@ public class Code implements ActionListener {
     private JLabel statusLabel;
     private JLabel urlLabel;
     private JLabel searchLabel;
+    private JLabel stopLabel;
     private JPanel controlPanel;
     private JMenuBar mb;
     private JTextField url1, search;
@@ -138,12 +139,22 @@ public class Code implements ActionListener {
         headerLabel.setText("Control in action: Button");
 
         JButton okButton = new JButton("search");
+        JButton stopButton = new JButton("stop");
+        JButton quitButton = new JButton("quit");
 
         okButton.setActionCommand("search");
+        stopButton.setActionCommand("stop");
+        quitButton.setActionCommand("quit");
 
         okButton.addActionListener(new ButtonClickListener());
+        stopButton.addActionListener(new ButtonClickListener());
+        quitButton.addActionListener(new ButtonClickListener());
+
 
         controlPanel.add(okButton);
+        controlPanel.add(stopButton);
+        controlPanel.add(quitButton);
+
 
         mainFrame.setVisible(true);
     }
@@ -194,6 +205,8 @@ public class Code implements ActionListener {
                         if(line.contains("/wiki/") && !line.contains(startName) && !line.contains(":")) {
                             URL = "https://en.wikipedia.org" + line.substring(start, end);
 
+                            searching = true;
+
                             System.out.println(URL + " " + numLinks);
 
 //                            results.setText(results.getText() + "https://en.wikipedia.org" + line.substring(start, end)+ "\n");
@@ -202,26 +215,31 @@ public class Code implements ActionListener {
 
                             if (recursion(URL, depth+1, maxDepth) == true) { // ***** make it so that it doesn't repeat...can't use a boolean, as it doesn't stop the recursion *****
 
-                                correct.add(URL); // *** ADD CORRECT ROUTE URLs *** --- see if possible/required???
+//                                for (int x = 0; x>=1; x++) {
 
-                                depth = 0; // ***** doesn't stop recursion...find some other way to stop *****
+                                    searching = false;
 
-                                System.out.println("complete: " + URL + " " + depth);
+                                    correct.add(URL); // *** ADD CORRECT ROUTE URLs *** --- see if possible/required???
 
-                                // show URL history here?????
+                                    depth = 0; // ***** doesn't stop recursion...find some other way to stop *****
 
-                                System.out.println("links searched: " + numLinks);
+                                    System.out.println("complete: " + URL + " " + depth);
 
-                                statusLabel.setText("links searched: " + numLinks);
+                                    // show URL history here?????
 
-                                System.out.println(correct); // **CHECK**
+                                    System.out.println("links searched: " + numLinks);
+
+                                    statusLabel.setText("links searched: " + numLinks);
+
+                                    System.out.println(correct); // **CHECK**
 
 //                                complete = true; // ***** doesn't do anything *****
 
-                                return true;
+                                    return true;
+                                }
                             }
                         }
-                    }
+//                    }
                 }
                 catch(Exception ex) {
                     System.out.println(ex);
@@ -238,14 +256,14 @@ public class Code implements ActionListener {
                 numLinks = 0;
                 urlSearch();
                 recursion(URL, 0, maxDepth);
+            }
 
+            if (command.equals("stop")){
+//                recursion(URL,3,maxDepth) = false;
+            }
 
-                if (searching == true) { // **CONFIRM THAT THIS CODE WORKS**
-                    statusLabel.setText("searching");
-                }
-                else{
-                    statusLabel.setText("");
-                }
+            if (command.equals("quit")){
+                System.exit(0);
             }
         }
     }
@@ -255,3 +273,5 @@ public class Code implements ActionListener {
 
     }
 }
+
+// NEXT STEPS: fix end printing, add correct URLs to ArrayList Correct, make it so you can clear the console to make another search,...
