@@ -18,11 +18,11 @@ public class Code implements ActionListener {
     private JLabel headerLabel;
     private JLabel statusLabel;
     private JLabel urlLabel;
-    private JLabel searchLabel;
+    private JLabel searchLabel, depthLabel;
     private JLabel stopLabel;
     private JPanel controlPanel;
     private JMenuBar mb;
-    private JTextField url1, search;
+    private JTextField url1, search, depthSearch;
     private int WIDTH = 800;
     private int HEIGHT = 700;
 
@@ -32,8 +32,9 @@ public class Code implements ActionListener {
 
 
 
-//    public int depth = 0;
-    private int maxDepth = 2;
+    public int depth = 0;
+    private int maxDepth;
+
 //    public ArrayList<String> search = new ArrayList<>();
     public ArrayList<String> correct = new ArrayList<>();
 
@@ -61,6 +62,7 @@ public class Code implements ActionListener {
     private void urlSearch(){
         startName = url1.getText();
         endName = search.getText();
+        maxDepth = Integer.parseInt(depthSearch.getText()) - 1;
 
         startUrl = "https://en.wikipedia.org/wiki/" + startName; //starting page
         endUrl = "https://en.wikipedia.org/wiki/" + endName; //ending page
@@ -73,25 +75,26 @@ public class Code implements ActionListener {
     private void prepareGUI() {
         mainFrame = new JFrame("Java SWING Examples");
         mainFrame.setSize(WIDTH, HEIGHT);
-        mainFrame.setLayout(new GridLayout(3, 2));
+        mainFrame.setLayout(new GridLayout(4, 2));
 
         mb = new JMenuBar();
 
         url1 = new JTextField("Keanu_Reeves"); // remove "name" once finished *************
-
         search = new JTextField("Ryan_Reynolds"); // remove "name" once finished *************
+        depthSearch = new JTextField("3");
 
         urlLabel = new JLabel("first person (typed: \"firstName_lastName\")", JLabel.CENTER);
-
         searchLabel = new JLabel("second person (typed: \"firstName_lastName\")", JLabel.CENTER);
+        depthLabel = new JLabel("max depth (recommended depth: 3)", JLabel.CENTER);
 
         mainFrame.add(urlLabel);
-
         mainFrame.add(url1);
 
         mainFrame.add(searchLabel);
-
         mainFrame.add(search);
+
+        mainFrame.add(depthLabel);
+        mainFrame.add(depthSearch);
 
 //        mainFrame.setJMenuBar(mb);
 
@@ -152,7 +155,7 @@ public class Code implements ActionListener {
 
 
         controlPanel.add(okButton);
-        controlPanel.add(stopButton);
+//        controlPanel.add(stopButton);
         controlPanel.add(quitButton);
 
 
@@ -213,33 +216,17 @@ public class Code implements ActionListener {
 
                             numLinks++;
 
-                            if (recursion(URL, depth+1, maxDepth) == true) { // ***** make it so that it doesn't repeat...can't use a boolean, as it doesn't stop the recursion *****
-
-//                                for (int x = 0; x>=1; x++) {
-
+                            if (recursion(URL, depth+1, maxDepth) == true) {
                                     searching = false;
-
-                                    correct.add(URL); // *** ADD CORRECT ROUTE URLs *** --- see if possible/required???
-
-                                    depth = 0; // ***** doesn't stop recursion...find some other way to stop *****
-
+                                    correct.add(startUrl);
+//                                    correct.add(URL);
                                     System.out.println("complete: " + URL + " " + depth);
-
-                                    // show URL history here?????
-
                                     System.out.println("links searched: " + numLinks);
-
-                                    statusLabel.setText("links searched: " + numLinks);
-
-                                    System.out.println(correct); // **CHECK**
-
-//                                complete = true; // ***** doesn't do anything *****
-
+                                    statusLabel.setText(startName + " -> " + endName + "    links searched: " + numLinks);
                                     return true;
-                                }
                             }
                         }
-//                    }
+                    }
                 }
                 catch(Exception ex) {
                     System.out.println(ex);
@@ -256,6 +243,20 @@ public class Code implements ActionListener {
                 numLinks = 0;
                 urlSearch();
                 recursion(URL, 0, maxDepth);
+
+//                if (recursion(URL, depth+1, maxDepth) == true) {
+//                    searching = false;
+//                    correct.add(startUrl);
+//                    correct.add(URL);
+//                    System.out.println("complete: " + URL + " " + depth);
+//                    System.out.println("links searched: " + numLinks);
+//                    statusLabel.setText(startName + " -> " + endName + "    links searched: " + numLinks);
+//                }
+
+                for (int x = maxDepth; x >=0; x--) {
+                    System.out.println(correct.get(x));
+                }
+
             }
 
             if (command.equals("stop")){
