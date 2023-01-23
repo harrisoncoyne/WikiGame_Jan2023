@@ -15,11 +15,8 @@ import java.net.URL;
 public class Code implements ActionListener {
 
     private JFrame mainFrame;
-    private JLabel headerLabel;
-    private JLabel statusLabel;
-    private JLabel urlLabel;
-    private JLabel searchLabel, depthLabel;
-    private JLabel stopLabel;
+
+    private JLabel headerLabel, statusLabel, urlLabel, searchLabel, depthLabel, resultsLabel;
     private JPanel controlPanel;
     private JMenuBar mb;
     private JTextField url1, search, depthSearch;
@@ -29,13 +26,9 @@ public class Code implements ActionListener {
     public JTextArea results;
     public URL url;
 
-
-
-
     public int depth = 0;
     private int maxDepth;
 
-//    public ArrayList<String> search = new ArrayList<>();
     public ArrayList<String> correct = new ArrayList<>();
 
     public int numLinks = 0;
@@ -60,6 +53,8 @@ public class Code implements ActionListener {
     }
 
     private void urlSearch(){
+        statusLabel.setText("searching");
+
         startName = url1.getText();
         endName = search.getText();
         maxDepth = Integer.parseInt(depthSearch.getText()) - 1;
@@ -69,13 +64,10 @@ public class Code implements ActionListener {
         URL = startUrl;
     }
 
-
-
-
     private void prepareGUI() {
         mainFrame = new JFrame("Java SWING Examples");
         mainFrame.setSize(WIDTH, HEIGHT);
-        mainFrame.setLayout(new GridLayout(4, 2));
+        mainFrame.setLayout(new GridLayout(5, 2));
 
         mb = new JMenuBar();
 
@@ -86,6 +78,7 @@ public class Code implements ActionListener {
         urlLabel = new JLabel("first person (typed: \"firstName_lastName\")", JLabel.CENTER);
         searchLabel = new JLabel("second person (typed: \"firstName_lastName\")", JLabel.CENTER);
         depthLabel = new JLabel("max depth (recommended depth: 3)", JLabel.CENTER);
+        resultsLabel = new JLabel("url route:", JLabel.CENTER);
 
         mainFrame.add(urlLabel);
         mainFrame.add(url1);
@@ -96,10 +89,8 @@ public class Code implements ActionListener {
         mainFrame.add(depthLabel);
         mainFrame.add(depthSearch);
 
-//        mainFrame.setJMenuBar(mb);
-
         headerLabel = new JLabel("", JLabel.CENTER);
-        statusLabel = new JLabel("type names", JLabel.CENTER);
+        statusLabel = new JLabel("", JLabel.CENTER);
         statusLabel.setSize(350, 10);
 
         mainFrame.addWindowListener(new WindowAdapter() {
@@ -114,27 +105,19 @@ public class Code implements ActionListener {
         mainFrame.add(controlPanel);
         mainFrame.add(statusLabel);
 
-//        JLabel title = new JLabel("results", JLabel.CENTER);
-//        mainFrame.add(title);
+        mainFrame.add(resultsLabel);
 
-//        JPanel panel = resultsPanel();
-//        mainFrame.add(BorderLayout.CENTER, new JScrollPane(panel));
+        JPanel panel = resultsPanel();
+        mainFrame.add(BorderLayout.CENTER, new JScrollPane(panel));
 
         mainFrame.setVisible(true);
     }
 
     public JPanel resultsPanel() {
-
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1, 1, 10, 10));
-
-//        JLabel label = new JLabel("RESULTS:");
-
         results = new JTextArea();
-
-//        panel.add(label);
         panel.add(results);
-
         return panel;
     }
 
@@ -156,7 +139,7 @@ public class Code implements ActionListener {
 
         controlPanel.add(okButton);
 //        controlPanel.add(stopButton);
-        controlPanel.add(quitButton);
+//        controlPanel.add(quitButton);
 
 
         mainFrame.setVisible(true);
@@ -165,19 +148,14 @@ public class Code implements ActionListener {
     public boolean recursion(String startUrl, int depth, int maxDepth) {
         // BASE CASE
         if (startUrl.equals(endUrl)) {
-
-//            correct.add(search); // need to make it so only adds "correct" search results to correct arraylist
-
             if (depth <= maxDepth) {
                 System.out.println("complete");
                 System.out.println(correct);
             }
-
             return true;
         }
         else if (depth > maxDepth) {
             System.out.println("failed: " + depth);
-//            depth = 0;
             return false;
         }
 
@@ -210,19 +188,13 @@ public class Code implements ActionListener {
 
                             searching = true;
 
-                            System.out.println(URL + " " + numLinks);
-
-//                            results.setText(results.getText() + "https://en.wikipedia.org" + line.substring(start, end)+ "\n");
+                            System.out.println(URL + " " + numLinks); // DO NOT DELETE
 
                             numLinks++;
 
                             if (recursion(URL, depth+1, maxDepth) == true) {
                                     searching = false;
                                     correct.add(startUrl);
-//                                    correct.add(URL);
-                                    System.out.println("complete: " + URL + " " + depth);
-                                    System.out.println("links searched: " + numLinks);
-                                    statusLabel.setText(startName + " -> " + endName + "    links searched: " + numLinks);
                                     return true;
                             }
                         }
@@ -244,23 +216,23 @@ public class Code implements ActionListener {
                 urlSearch();
                 recursion(URL, 0, maxDepth);
 
-//                if (recursion(URL, depth+1, maxDepth) == true) {
-//                    searching = false;
-//                    correct.add(startUrl);
-//                    correct.add(URL);
-//                    System.out.println("complete: " + URL + " " + depth);
-//                    System.out.println("links searched: " + numLinks);
-//                    statusLabel.setText(startName + " -> " + endName + "    links searched: " + numLinks);
-//                }
+                statusLabel.setText(startName + " -> " + endName);
+
+                System.out.println("-------------------------------------------------------------------------------------------------");
 
                 for (int x = maxDepth; x >=0; x--) {
                     System.out.println(correct.get(x));
+                    System.out.println("                       V");
                 }
 
+                results.setText("1) " + correct.get(2) + "\n" + "2) " + correct.get(1) + "\n" + "3) " + correct.get(0) + "\n" + "4) " + URL + "\n" + "\n" + "links searched: " + numLinks);
+
+                System.out.println(URL);
+
+                System.out.println("links searched: " + numLinks);
             }
 
             if (command.equals("stop")){
-//                recursion(URL,3,maxDepth) = false;
             }
 
             if (command.equals("quit")){
@@ -271,8 +243,5 @@ public class Code implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
     }
 }
-
-// NEXT STEPS: fix end printing, add correct URLs to ArrayList Correct, make it so you can clear the console to make another search,...
