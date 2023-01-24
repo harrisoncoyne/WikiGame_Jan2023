@@ -11,8 +11,11 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.awt.image.BufferStrategy;
 
 public class Code implements ActionListener {
+
+    public BufferStrategy bufferStrategy;
 
     private JFrame mainFrame;
 
@@ -20,8 +23,8 @@ public class Code implements ActionListener {
     private JPanel controlPanel;
     private JMenuBar mb;
     private JTextField url1, search, depthSearch;
-    private int WIDTH = 800;
-    private int HEIGHT = 700;
+    private int WIDTH = 1000;
+    private int HEIGHT = 800;
 
     public JTextArea results;
     public URL url;
@@ -42,9 +45,15 @@ public class Code implements ActionListener {
 
     public boolean complete = false;
     public boolean searching = false;
+    public boolean name = true;
+
+    public Image loadingPic;
 
     public Code() {
+//        loadingPic = Toolkit.getDefaultToolkit().getImage("loading-gif.webp");
+
         prepareGUI();
+//        render();
     }
 
     public static void main(String[] args) {
@@ -59,8 +68,15 @@ public class Code implements ActionListener {
         endName = search.getText();
         maxDepth = Integer.parseInt(depthSearch.getText()) - 1;
 
-        startUrl = "https://en.wikipedia.org/wiki/" + startName; //starting page
-        endUrl = "https://en.wikipedia.org/wiki/" + endName; //ending page
+        if (name == true) {
+            startUrl = "https://en.wikipedia.org/wiki/" + startName; //starting page
+            endUrl = "https://en.wikipedia.org/wiki/" + endName; //ending page
+        }
+        else{
+            startUrl = startName;
+            endUrl = endName;
+        }
+
         URL = startUrl;
     }
 
@@ -71,12 +87,12 @@ public class Code implements ActionListener {
 
         mb = new JMenuBar();
 
-        url1 = new JTextField("Keanu_Reeves"); // remove "name" once finished *************
-        search = new JTextField("Ryan_Reynolds"); // remove "name" once finished *************
+        url1 = new JTextField("");
+        search = new JTextField("");
         depthSearch = new JTextField("3");
 
-        urlLabel = new JLabel("first person (typed: \"firstName_lastName\")", JLabel.CENTER);
-        searchLabel = new JLabel("second person (typed: \"firstName_lastName\")", JLabel.CENTER);
+        urlLabel = new JLabel("start (if person, type: \"firstName_lastName\"; if other, paste Wikipedia URL)", JLabel.CENTER);
+        searchLabel = new JLabel("end (if person, type: \"firstName_lastName\"; if other, paste Wikipedia URL)", JLabel.CENTER);
         depthLabel = new JLabel("max depth (recommended depth: 3)", JLabel.CENTER);
         resultsLabel = new JLabel("url route:", JLabel.CENTER);
 
@@ -111,6 +127,12 @@ public class Code implements ActionListener {
         mainFrame.add(BorderLayout.CENTER, new JScrollPane(panel));
 
         mainFrame.setVisible(true);
+
+
+//        canvas = new Canvas();
+//        panel.add(canvas);
+//        canvas.createBufferStrategy(2);
+//        bufferStrategy = canvas.getBufferStrategy();
     }
 
     public JPanel resultsPanel() {
@@ -124,28 +146,42 @@ public class Code implements ActionListener {
     private void showEventDemo() {
         headerLabel.setText("Control in action: Button");
 
-        JButton okButton = new JButton("search");
+        JButton nameButton = new JButton("search people");
         JButton stopButton = new JButton("stop");
         JButton quitButton = new JButton("quit");
+        JButton otherButton = new JButton("search other");
 
-        okButton.setActionCommand("search");
+        nameButton.setActionCommand("search people");
         stopButton.setActionCommand("stop");
         quitButton.setActionCommand("quit");
+        otherButton.setActionCommand("search other");
 
-        okButton.addActionListener(new ButtonClickListener());
+        nameButton.addActionListener(new ButtonClickListener());
         stopButton.addActionListener(new ButtonClickListener());
         quitButton.addActionListener(new ButtonClickListener());
+        otherButton.addActionListener(new ButtonClickListener());
 
 
-        controlPanel.add(okButton);
+        controlPanel.add(nameButton);
+        controlPanel.add(otherButton);
 //        controlPanel.add(stopButton);
-//        controlPanel.add(quitButton);
+        controlPanel.add(quitButton);
 
 
         mainFrame.setVisible(true);
     }
 
-    public boolean recursion(String startUrl, int depth, int maxDepth) {
+//    private void render() {
+//
+//        Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
+////        g.clearRect(0, 0, WIDTH, HEIGHT);
+//        g.drawImage(loadingPic, 0, 0, 100, 100, null);
+//        g.dispose();
+//
+//        bufferStrategy.show();
+//    }
+
+        public boolean recursion(String startUrl, int depth, int maxDepth) {
         // BASE CASE
         if (startUrl.equals(endUrl)) {
             if (depth <= maxDepth) {
@@ -211,7 +247,12 @@ public class Code implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
 
-            if (command.equals("search")) {
+            if (command.equals("search people")) {
+
+                correct.clear();
+
+                name = true;
+
                 numLinks = 0;
                 urlSearch();
                 recursion(URL, 0, maxDepth);
@@ -232,8 +273,34 @@ public class Code implements ActionListener {
                 System.out.println("links searched: " + numLinks);
             }
 
-            if (command.equals("stop")){
+            if (command.equals("search other")) {
+
+                correct.clear();
+
+                name = false;
+
+                numLinks = 0;
+                urlSearch();
+                recursion(URL, 0, maxDepth);
+
+                statusLabel.setText(startName + " -> " + endName);
+
+                System.out.println("-------------------------------------------------------------------------------------------------");
+
+                for (int x = maxDepth; x >=0; x--) {
+                    System.out.println(correct.get(x));
+                    System.out.println("                       V");
+                }
+
+                results.setText("1) " + correct.get(2) + "\n" + "2) " + correct.get(1) + "\n" + "3) " + correct.get(0) + "\n" + "4) " + URL + "\n" + "\n" + "links searched: " + numLinks);
+
+                System.out.println(URL);
+
+                System.out.println("links searched: " + numLinks);
             }
+
+//            if (command.equals("stop")){
+//            }
 
             if (command.equals("quit")){
                 System.exit(0);
