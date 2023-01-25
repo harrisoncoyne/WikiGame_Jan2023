@@ -8,9 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.awt.image.BufferStrategy;
 
 public class Code implements ActionListener {
@@ -19,7 +16,7 @@ public class Code implements ActionListener {
 
     private JFrame mainFrame;
 
-    private JLabel headerLabel, statusLabel, urlLabel, searchLabel, depthLabel, resultsLabel;
+    private JLabel headerLabel, statusLabel, urlLabel, searchLabel, depthLabel, resultsLabel, urlLabel2, searchLabel2;
     private JPanel controlPanel;
     private JMenuBar mb;
     private JTextField url1, search, depthSearch;
@@ -80,6 +77,63 @@ public class Code implements ActionListener {
         URL = startUrl;
     }
 
+    private JTextField randomSearchStart(){
+            try { //HTML READ
+
+                URL look = new URL("https://en.wikipedia.org/wiki/Main_Page");
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
+
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+
+                    int start = line.indexOf("/wiki/");
+                    int end = line.indexOf("\"", start);
+
+                    if (line.contains("/wiki/") && !line.contains(":") && !line.contains("Main_Page") && !line.contains("Wikipedia")) {
+                        startUrl = "https://en.wikipedia.org" + line.substring(start, end);
+//                        System.out.println(startUrl);
+
+                        url1 = new JTextField(startUrl);
+                    }
+                }
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+        return url1;
+    }
+
+
+
+
+    private JTextField randomSearchEnd(){
+            try { //HTML READ
+
+                URL look = new URL("https://de.wikipedia.org/wiki/Wikipedia:Hauptseite");
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
+
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+
+                    int start = line.indexOf("/wiki/");
+                    int end = line.indexOf("\"", start);
+
+                    if (line.contains("/wiki/") && !line.contains(":") && !line.contains("Main_Page") && !line.contains("Wikipedia") && !line.contains(startUrl)) {
+                        endUrl = "https://en.wikipedia.org" + line.substring(start, end);
+//                        System.out.println("** " + endUrl);
+
+                        search = new JTextField(endUrl);
+                    }
+                }
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+            return search;
+    }
+
     private void prepareGUI() {
         mainFrame = new JFrame("Java SWING Examples");
         mainFrame.setSize(WIDTH, HEIGHT);
@@ -87,8 +141,8 @@ public class Code implements ActionListener {
 
         mb = new JMenuBar();
 
-        url1 = new JTextField("");
-        search = new JTextField("");
+        url1 = new JTextField();
+        search = new JTextField();
         depthSearch = new JTextField("3");
 
         urlLabel = new JLabel("start (if person, type: \"firstName_lastName\"; if other, paste Wikipedia URL)", JLabel.CENTER);
@@ -150,20 +204,24 @@ public class Code implements ActionListener {
         JButton stopButton = new JButton("stop");
         JButton quitButton = new JButton("quit");
         JButton otherButton = new JButton("search other");
+        JButton randomButton = new JButton ("random search");
 
         nameButton.setActionCommand("search people");
         stopButton.setActionCommand("stop");
         quitButton.setActionCommand("quit");
         otherButton.setActionCommand("search other");
+        randomButton.setActionCommand("random search");
 
         nameButton.addActionListener(new ButtonClickListener());
         stopButton.addActionListener(new ButtonClickListener());
         quitButton.addActionListener(new ButtonClickListener());
         otherButton.addActionListener(new ButtonClickListener());
+        randomButton.addActionListener(new ButtonClickListener());
 
 
         controlPanel.add(nameButton);
         controlPanel.add(otherButton);
+        controlPanel.add(randomButton);
 //        controlPanel.add(stopButton);
         controlPanel.add(quitButton);
 
@@ -299,8 +357,26 @@ public class Code implements ActionListener {
                 System.out.println("links searched: " + numLinks);
             }
 
-//            if (command.equals("stop")){
-//            }
+            if (command.equals("random search")){
+                randomSearchStart();
+                randomSearchEnd();
+                correct.clear();
+                name = false;
+                recursion(URL, 0, maxDepth); //***BUG***
+
+                System.out.println("-------------------------------------------------------------------------------------------------");
+
+                for (int x = maxDepth; x >=0; x--) {
+                    System.out.println(correct.get(x));
+                    System.out.println("                       V");
+                }
+
+                results.setText("1) " + correct.get(2) + "\n" + "2) " + correct.get(1) + "\n" + "3) " + correct.get(0) + "\n" + "4) " + URL + "\n" + "\n" + "links searched: " + numLinks);
+
+                System.out.println(URL);
+
+                System.out.println("links searched: " + numLinks);
+            }
 
             if (command.equals("quit")){
                 System.exit(0);
