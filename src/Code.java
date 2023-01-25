@@ -20,6 +20,9 @@ public class Code implements ActionListener {
     private JPanel controlPanel;
     private JMenuBar mb;
     private JTextField url1, search, depthSearch;
+
+    private JLabel pic1, pic2, space;
+
     private int WIDTH = 1000;
     private int HEIGHT = 800;
 
@@ -95,7 +98,7 @@ public class Code implements ActionListener {
                         startUrl = "https://en.wikipedia.org" + line.substring(start, end);
 //                        System.out.println(startUrl);
 
-                        url1 = new JTextField(startUrl);
+//                        url1 = new JTextField(startUrl);
                     }
                 }
             } catch (Exception ex) {
@@ -125,7 +128,7 @@ public class Code implements ActionListener {
                         endUrl = "https://en.wikipedia.org" + line.substring(start, end);
 //                        System.out.println("** " + endUrl);
 
-                        search = new JTextField(endUrl);
+//                        search = new JTextField(endUrl);
                     }
                 }
             } catch (Exception ex) {
@@ -138,6 +141,15 @@ public class Code implements ActionListener {
         mainFrame = new JFrame("Java SWING Examples");
         mainFrame.setSize(WIDTH, HEIGHT);
         mainFrame.setLayout(new GridLayout(5, 2));
+//        mainFrame.setLayout(new GridBagLayout());
+//        GridBagConstraints c = new GridBagConstraints();
+//        if(shouldFill){
+//            c.fill = GridBagConstraints.HORIZONTAL;
+//        }
+
+        pic1 = new JLabel("image of start person");
+        pic2 = new JLabel("image of end person");
+        space = new JLabel("");
 
         mb = new JMenuBar();
 
@@ -152,16 +164,21 @@ public class Code implements ActionListener {
 
         mainFrame.add(urlLabel);
         mainFrame.add(url1);
+//        mainFrame.add(pic1);
 
         mainFrame.add(searchLabel);
         mainFrame.add(search);
+//        mainFrame.add(pic2);
 
         mainFrame.add(depthLabel);
         mainFrame.add(depthSearch);
+//        mainFrame.add(space);
 
         headerLabel = new JLabel("", JLabel.CENTER);
         statusLabel = new JLabel("", JLabel.CENTER);
         statusLabel.setSize(350, 10);
+
+
 
         mainFrame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent) {
@@ -169,11 +186,16 @@ public class Code implements ActionListener {
             }
         });
 
+
         controlPanel = new JPanel();
         controlPanel.setLayout(new FlowLayout());
 
         mainFrame.add(controlPanel);
+
+
+
         mainFrame.add(statusLabel);
+
 
         mainFrame.add(resultsLabel);
 
@@ -357,7 +379,7 @@ public class Code implements ActionListener {
                 System.out.println("links searched: " + numLinks);
             }
 
-            if (command.equals("random search")){
+            if (command.equals("random search")){ //***NEED TO FIX SO THAT URLs WORK WITH RECURSION (SET startURL and endURL)***
                 randomSearchStart();
                 randomSearchEnd();
                 correct.clear();
