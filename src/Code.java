@@ -39,7 +39,7 @@ public class Code implements ActionListener {
     public ArrayList<String> randomEnd = new ArrayList<>();
 
     public int numLinks = 0;
-
+//
     private String startName;
     private String endName;
 
