@@ -432,7 +432,7 @@ public class Code implements ActionListener {
 
                 correct.clear();
                 numLinks = 0;
-
+//
                 randUrlSearch();
                 recursion(startUrl, 0, maxDepth);
 
