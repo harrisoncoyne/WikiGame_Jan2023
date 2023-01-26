@@ -16,14 +16,14 @@ public class Code implements ActionListener {
 
     private JFrame mainFrame;
 
-    private JLabel headerLabel, statusLabel, urlLabel, searchLabel, depthLabel, resultsLabel, urlLabel2, searchLabel2;
+    private JLabel headerLabel, statusLabel, urlLabel, searchLabel, depthLabel, resultsLabel, urlLabel2, searchLabel2, searchText;
     private JPanel controlPanel;
     private JMenuBar mb;
     private JTextField url1, search, depthSearch;
 
-    private JLabel pic1, pic2, space;
+    private JLabel pic1, pic2, space, space1, space2, space3, space4, loadPic;
 
-    private int WIDTH = 1000;
+    private int WIDTH = 1400;
     private int HEIGHT = 800;
 
     public JTextArea results;
@@ -138,47 +138,50 @@ public class Code implements ActionListener {
     }
 
     private void prepareGUI() {
-        mainFrame = new JFrame("Java SWING Examples");
+        mainFrame = new JFrame("H.Coyne - Wikipedia Game (Jan.2023)");
         mainFrame.setSize(WIDTH, HEIGHT);
-        mainFrame.setLayout(new GridLayout(5, 2));
+        mainFrame.setLayout(new GridLayout(5, 3));
 //        mainFrame.setLayout(new GridBagLayout());
 //        GridBagConstraints c = new GridBagConstraints();
 //        if(shouldFill){
 //            c.fill = GridBagConstraints.HORIZONTAL;
 //        }
 
-        pic1 = new JLabel("image of start person");
-        pic2 = new JLabel("image of end person");
+        pic1 = new JLabel("image of start person", JLabel.CENTER);
+        pic2 = new JLabel("image of end person", JLabel.CENTER);
+        loadPic = new JLabel("gif of loading", JLabel.CENTER);
         space = new JLabel("");
+        space1 = new JLabel("");
+        space2 = new JLabel("");
+        space3 = new JLabel("");
+        space4 = new JLabel("");
 
         mb = new JMenuBar();
 
-        url1 = new JTextField();
-        search = new JTextField();
+        url1 = new JTextField("Keanu_Reeves");
+        search = new JTextField("Ryan_Reynolds");
         depthSearch = new JTextField("3");
 
-        urlLabel = new JLabel("start (if person, type: \"firstName_lastName\"; if other, paste Wikipedia URL)", JLabel.CENTER);
-        searchLabel = new JLabel("end (if person, type: \"firstName_lastName\"; if other, paste Wikipedia URL)", JLabel.CENTER);
+        urlLabel = new JLabel("start (if term, type: \"firstName_lastName\"; if url, paste Wikipedia URL)", JLabel.CENTER);
+        searchLabel = new JLabel("end (if term, type: \"firstName_lastName\"; if url, paste Wikipedia URL)", JLabel.CENTER);
         depthLabel = new JLabel("max depth (recommended depth: 3)", JLabel.CENTER);
         resultsLabel = new JLabel("url route:", JLabel.CENTER);
 
         mainFrame.add(urlLabel);
         mainFrame.add(url1);
-//        mainFrame.add(pic1);
+        mainFrame.add(pic1);
 
         mainFrame.add(searchLabel);
         mainFrame.add(search);
-//        mainFrame.add(pic2);
+        mainFrame.add(pic2);
 
         mainFrame.add(depthLabel);
         mainFrame.add(depthSearch);
-//        mainFrame.add(space);
+        mainFrame.add(space3);
 
         headerLabel = new JLabel("", JLabel.CENTER);
         statusLabel = new JLabel("", JLabel.CENTER);
         statusLabel.setSize(350, 10);
-
-
 
         mainFrame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent) {
@@ -186,9 +189,8 @@ public class Code implements ActionListener {
             }
         });
 
-
         controlPanel = new JPanel();
-        controlPanel.setLayout(new FlowLayout());
+        controlPanel.setLayout(new GridLayout(3,3));
 
         mainFrame.add(controlPanel);
 
@@ -196,6 +198,7 @@ public class Code implements ActionListener {
 
         mainFrame.add(statusLabel);
 
+        mainFrame.add(loadPic); //loading screen
 
         mainFrame.add(resultsLabel);
 
@@ -203,12 +206,6 @@ public class Code implements ActionListener {
         mainFrame.add(BorderLayout.CENTER, new JScrollPane(panel));
 
         mainFrame.setVisible(true);
-
-
-//        canvas = new Canvas();
-//        panel.add(canvas);
-//        canvas.createBufferStrategy(2);
-//        bufferStrategy = canvas.getBufferStrategy();
     }
 
     public JPanel resultsPanel() {
@@ -222,11 +219,17 @@ public class Code implements ActionListener {
     private void showEventDemo() {
         headerLabel.setText("Control in action: Button");
 
-        JButton nameButton = new JButton("search people");
+        JButton nameButton = new JButton("term");
+
+        JButton otherButton = new JButton("url");
+
+        JButton randomButton = new JButton ("random");
+
         JButton stopButton = new JButton("stop");
+
         JButton quitButton = new JButton("quit");
-        JButton otherButton = new JButton("search other");
-        JButton randomButton = new JButton ("random search");
+        quitButton.setBackground(Color.RED);
+        quitButton.setForeground(Color.WHITE);
 
         nameButton.setActionCommand("search people");
         stopButton.setActionCommand("stop");
@@ -240,13 +243,20 @@ public class Code implements ActionListener {
         otherButton.addActionListener(new ButtonClickListener());
         randomButton.addActionListener(new ButtonClickListener());
 
+        searchText = new JLabel("search", SwingConstants.CENTER);
+
+        controlPanel.add(space);
+        controlPanel.add(searchText);
+        controlPanel.add(space1);
 
         controlPanel.add(nameButton);
         controlPanel.add(otherButton);
         controlPanel.add(randomButton);
-//        controlPanel.add(stopButton);
+
+        controlPanel.add(space2);
         controlPanel.add(quitButton);
 
+//        controlPanel.add(stopButton);
 
         mainFrame.setVisible(true);
     }
