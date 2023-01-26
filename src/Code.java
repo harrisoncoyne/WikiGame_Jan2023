@@ -23,23 +23,27 @@ public class Code implements ActionListener {
 
     private JLabel pic1, pic2, space, space1, space2, space3, space4, loadPic;
 
-    private int WIDTH = 1400;
+    private int WIDTH = 1000;
     private int HEIGHT = 800;
 
     public JTextArea results;
     public URL url;
 
+    public URL start, end;
+
     public int depth = 0;
     private int maxDepth;
 
     public ArrayList<String> correct = new ArrayList<>();
+    public ArrayList<String> randomStart = new ArrayList<>();
+    public ArrayList<String> randomEnd = new ArrayList<>();
 
     public int numLinks = 0;
 
     private String startName;
     private String endName;
 
-    private String startUrl; //starting page
+    private String startUrl = ""; //starting page
     private String endUrl; //ending page
     private String URL;
 
@@ -48,6 +52,8 @@ public class Code implements ActionListener {
     public boolean name = true;
 
     public Image loadingPic;
+
+    public int randStart = 0, randEnd = 0;
 
     public Code() {
 //        loadingPic = Toolkit.getDefaultToolkit().getImage("loading-gif.webp");
@@ -80,61 +86,85 @@ public class Code implements ActionListener {
         URL = startUrl;
     }
 
+    private void randUrlSearch(){
+        statusLabel.setText("searching");
+
+        int random1 = (int) (Math.random() * randStart);
+        int random2 = (int) (Math.random() * randStart);
+
+        startName = randomStart.get(random1);
+
+        if (random2 != random1){
+            endName = randomStart.get(random2);
+        }
+        else{
+            random2 = (int)(Math.random() + randStart);
+            return;
+        }
+
+        maxDepth = Integer.parseInt(depthSearch.getText()) - 1;
+
+        startUrl = startName;
+        endUrl = endName;
+        URL = startUrl;
+    }
+
     private JTextField randomSearchStart(){
-            try { //HTML READ
+        try { //HTML READ
 
-                URL look = new URL("https://en.wikipedia.org/wiki/Main_Page");
+            URL look = new URL("https://en.wikipedia.org/wiki/Main_Page");
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
 
-                String line;
+            String line;
 
-                while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
 
-                    int start = line.indexOf("/wiki/");
-                    int end = line.indexOf("\"", start);
+                int start = line.indexOf("/wiki/");
+                int end = line.indexOf("\"", start);
 
-                    if (line.contains("/wiki/") && !line.contains(":") && !line.contains("Main_Page") && !line.contains("Wikipedia")) {
-                        startUrl = "https://en.wikipedia.org" + line.substring(start, end);
+                if (line.contains("/wiki/") && !line.contains(":") && !line.contains("Main_Page") && !line.contains("Wikipedia")) {
+                    startUrl = "https://en.wikipedia.org" + line.substring(start, end);
+                    randStart++;
+                    randomStart.add(startUrl);
 //                        System.out.println(startUrl);
 
 //                        url1 = new JTextField(startUrl);
-                    }
                 }
-            } catch (Exception ex) {
-                System.out.println(ex);
             }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
         return url1;
     }
 
-
-
-
     private JTextField randomSearchEnd(){
-            try { //HTML READ
+        try { //HTML READ
 
-                URL look = new URL("https://de.wikipedia.org/wiki/Wikipedia:Hauptseite");
+            URL look = new URL("https://de.wikipedia.org/wiki/Wikipedia:Hauptseite");
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
 
-                String line;
+            String line;
 
-                while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
 
-                    int start = line.indexOf("/wiki/");
-                    int end = line.indexOf("\"", start);
+                int start = line.indexOf("/wiki/");
+                int end = line.indexOf("\"", start);
 
-                    if (line.contains("/wiki/") && !line.contains(":") && !line.contains("Main_Page") && !line.contains("Wikipedia") && !line.contains(startUrl)) {
-                        endUrl = "https://en.wikipedia.org" + line.substring(start, end);
+                if (line.contains("/wiki/") && !line.contains(":") && !line.contains("Main_Page") && !line.contains("Wikipedia") && !line.contains(startUrl)) {
+                    endUrl = "https://en.wikipedia.org" + line.substring(start, end);
+                    randEnd++;
+                    randomEnd.add(endUrl);
 //                        System.out.println("** " + endUrl);
 
 //                        search = new JTextField(endUrl);
-                    }
                 }
-            } catch (Exception ex) {
-                System.out.println(ex);
             }
-            return search;
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return search;
     }
 
     private void prepareGUI() {
@@ -147,9 +177,9 @@ public class Code implements ActionListener {
 //            c.fill = GridBagConstraints.HORIZONTAL;
 //        }
 
-        pic1 = new JLabel("image of start person", JLabel.CENTER);
-        pic2 = new JLabel("image of end person", JLabel.CENTER);
-        loadPic = new JLabel("gif of loading", JLabel.CENTER);
+//        pic1 = new JLabel("image of start person", JLabel.CENTER);
+//        pic2 = new JLabel("image of end person", JLabel.CENTER);
+//        loadPic = new JLabel("gif of loading", JLabel.CENTER);
         space = new JLabel("");
         space1 = new JLabel("");
         space2 = new JLabel("");
@@ -158,8 +188,8 @@ public class Code implements ActionListener {
 
         mb = new JMenuBar();
 
-        url1 = new JTextField("Keanu_Reeves");
-        search = new JTextField("Ryan_Reynolds");
+        url1 = new JTextField("");
+        search = new JTextField("");
         depthSearch = new JTextField("3");
 
         urlLabel = new JLabel("start (if term, type: \"firstName_lastName\"; if url, paste Wikipedia URL)", JLabel.CENTER);
@@ -169,15 +199,15 @@ public class Code implements ActionListener {
 
         mainFrame.add(urlLabel);
         mainFrame.add(url1);
-        mainFrame.add(pic1);
+//        mainFrame.add(pic1);
 
         mainFrame.add(searchLabel);
         mainFrame.add(search);
-        mainFrame.add(pic2);
+//        mainFrame.add(pic2);
 
         mainFrame.add(depthLabel);
         mainFrame.add(depthSearch);
-        mainFrame.add(space3);
+//        mainFrame.add(space3);
 
         headerLabel = new JLabel("", JLabel.CENTER);
         statusLabel = new JLabel("", JLabel.CENTER);
@@ -198,7 +228,7 @@ public class Code implements ActionListener {
 
         mainFrame.add(statusLabel);
 
-        mainFrame.add(loadPic); //loading screen
+//        mainFrame.add(loadPic); //loading screen
 
         mainFrame.add(resultsLabel);
 
@@ -271,7 +301,7 @@ public class Code implements ActionListener {
 //        bufferStrategy.show();
 //    }
 
-        public boolean recursion(String startUrl, int depth, int maxDepth) {
+    public boolean recursion(String startUrl, int depth, int maxDepth) {
         // BASE CASE
         if (startUrl.equals(endUrl)) {
             if (depth <= maxDepth) {
@@ -291,44 +321,51 @@ public class Code implements ActionListener {
         else {
             statusLabel.setText("searching");
 
-                System.out.println();
-                System.out.println("depth: " + depth);
-                System.out.println("url: " + URL);
-                System.out.println();
+            System.out.println();
+            System.out.println("depth: " + depth);
+            System.out.println("start url: " + startUrl);
+            System.out.println("end url: " + endUrl);
+            System.out.println();
 
-                try { //HTML READ
+            try { //HTML READ
 
-                    URL look = new URL(startUrl);
+                URL look = new URL(URL);
 
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(look.openStream()));
 
-                    String line;
+                String line;
 
-                    while ((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null) {
+
+                    if(line.contains("/wiki/")){
 
                         int start = line.indexOf("/wiki/");
+//                        System.out.println("start index: " + start);
                         int end = line.indexOf("\"", start);
 
                         if(line.contains("/wiki/") && !line.contains(startName) && !line.contains(":")) {
                             URL = "https://en.wikipedia.org" + line.substring(start, end);
+//                            System.out.println("URL: " + URL);
 
                             searching = true;
 
                             System.out.println(URL + " " + numLinks); // DO NOT DELETE
 
                             numLinks++;
-
+//                            System.out.println("doing recursion");
                             if (recursion(URL, depth+1, maxDepth) == true) {
-                                    searching = false;
-                                    correct.add(startUrl);
-                                    return true;
+
+                                searching = false;
+                                correct.add(startUrl);
+                                return true;
                             }
                         }
                     }
                 }
-                catch(Exception ex) {
-                    System.out.println(ex);
-                }
+            }
+            catch(Exception ex) {
+                System.out.println(ex);
+            }
         }
         return false;
     }
@@ -392,13 +429,17 @@ public class Code implements ActionListener {
             if (command.equals("random search")){ //***NEED TO FIX SO THAT URLs WORK WITH RECURSION (SET startURL and endURL)***
                 randomSearchStart();
                 randomSearchEnd();
+
                 correct.clear();
-                name = false;
-                recursion(URL, 0, maxDepth); //***BUG***
+                numLinks = 0;
+
+                randUrlSearch();
+                recursion(startUrl, 0, maxDepth);
 
                 System.out.println("-------------------------------------------------------------------------------------------------");
 
-                for (int x = maxDepth; x >=0; x--) {
+
+                for (int x = maxDepth-1; x >=0; x--) {
                     System.out.println(correct.get(x));
                     System.out.println("                       V");
                 }
